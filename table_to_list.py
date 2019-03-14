@@ -1,6 +1,13 @@
 import pandas as pd
+import sys
+
+def SetCsvFileName():
+
+    args = sys.argv
+    return(args[1])
 
 def LoadCsv(csv_file):
+
     df = pd.read_csv(csv_file)
     return(df)
 
@@ -53,7 +60,7 @@ def makeDict(df, label):
                     text_info_all_label += ', '
                     i += 1
             else:
-                print('標本番号ないです')
+                text_info_all_label = '[NO SPECIMEN NUMBER!!]'
 
             text_info_all_specimens += text_info_all_label
             # 標本数-1の分だけ";"を入れる
@@ -75,13 +82,24 @@ def formatingList(text):
     formatted_text = text.replace('\u3000', '').replace(' ,', ',').replace(', nan', '').replace('\r\n', ' ')
     return formatted_text
 
+def printSpeciesInfo(all_species_list):
+
+    print('学名を入力（終了はquitを入力）')
+    while 1:
+        print('>')
+        name = input()
+        if name == 'quit':
+            break
+        print(all_species_list[name])
+    print('finish')
+
 def main():
-    # urlを設定する
-    url = 'test.csv'
+
+    url = SetCsvFileName()
     df = LoadCsv(url)
     label = SetRequiredLabel()
     all_species_list = makeDict(df, label)
-    print(all_species_list)
+    printSpeciesInfo(all_species_list)
 
 if __name__ == "__main__":
     main()
