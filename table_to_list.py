@@ -84,11 +84,14 @@ def formatingList(text):
 
 def printSpeciesInfo(all_species_list):
 
-    print('学名を入力（終了はquitを入力）')
+    print('学名を入力（全て表示するにはall, 終了するにはquit）')
     while 1:
         print('>')
         name = input()
         if name == 'quit':
+            break
+        if name == 'all':
+            print(all_species_list)
             break
         print(all_species_list[name])
     print('finish')
