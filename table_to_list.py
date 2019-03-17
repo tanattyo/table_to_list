@@ -1,17 +1,17 @@
 import pandas as pd
 import sys
 
-def SetCsvFileName():
+def put_csv_file_name():
 
     args = sys.argv
-    return(args[1])
+    return(args)
 
-def LoadCsv(csv_file):
+def load_csv_file(csv_file):
 
     df = pd.read_csv(csv_file)
     return(df)
 
-def SetRequiredLabel():
+def get_necessary_label():
 
     # 検索keyとなる列の指定
     label_species = 'name'
@@ -29,7 +29,7 @@ def SetRequiredLabel():
     }
     return label
 
-def makeDict(df, label):
+def create_dictionary(df, label):
 
     # 種名によってグルーピング
     grouped = df.groupby(label['label_species']).groups
@@ -69,40 +69,48 @@ def makeDict(df, label):
             text_info_all_specimens += '; '
             j += 1
 
-        text_info_all_specimens_formatted = formatingList(text_info_all_specimens)
+        text_info_all_specimens_formatted = format_specimen_info(text_info_all_specimens)
         all_specimen_list = {species: text_info_all_specimens_formatted}
 
         all_species_list.update(all_specimen_list)
 
     return all_species_list
 
-def formatingList(text):
+def format_specimen_info(text):
 
     # 出力についてテキストで一括でいじれる部分はここで弄る
     formatted_text = text.replace('\u3000', '').replace(' ,', ',').replace(', nan', '').replace('\r\n', ' ')
     return formatted_text
 
-def printSpeciesInfo(all_species_list):
+def show_species_info(all_species_list, name_list):
 
-    print('学名を入力（全て表示するにはall, 終了するにはquit）')
-    while 1:
-        print('>')
-        name = input()
-        if name == 'quit':
-            break
-        if name == 'all':
-            print(all_species_list)
-            break
-        print(all_species_list[name])
-    print('finish')
+    # argsのリスト数は可変
+    for i in name_list:
+        try:
+            print('>' + i + '\n' + all_species_list[i])
+        except:
+            print('>' + i + '\n' + 'ラベルが存在しません')
+
+def show_all_species_info(all_species_list):
+
+    print(all_species_list)
 
 def main():
 
-    url = SetCsvFileName()
-    df = LoadCsv(url)
-    label = SetRequiredLabel()
-    all_species_list = makeDict(df, label)
-    printSpeciesInfo(all_species_list)
+    args = put_csv_file_name()
+
+    csv_file_name = args[1]
+    species_name_list = args[2:]
+
+    df = load_csv_file(csv_file_name)
+    label = get_necessary_label()
+    all_species_list = create_dictionary(df, label)
+    print(species_name_list)
+
+    if len(species_name_list) != 0:
+        show_species_info(all_species_list, species_name_list)
+    else:
+        show_all_species_info(all_species_list)
 
 if __name__ == "__main__":
     main()
